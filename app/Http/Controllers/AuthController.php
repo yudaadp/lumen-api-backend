@@ -4,7 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+/**
+ * @OA\Post (
+ *     path="/api/register",
+ *     @OA\Response(response="200", description="Api register")
+ * )
+ */
 
+/**
+ * @OA\Post (
+ *     path="/api/login",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          @OA\JsonContent(
+ *              type="object",
+ *              @OA\Property(property="email", type="string", example="Your email"),
+ *              @OA\Property(property="password", type="string", example="Ypur password")
+ *          )
+ *      ),
+ *     @OA\Response(response="200", description="Api login")
+ * )
+ */
 class AuthController extends Controller
 {
     public function register(Request $request)

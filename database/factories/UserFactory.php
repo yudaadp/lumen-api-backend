@@ -22,9 +22,12 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
+            'username' => $this->faker->unique()->userName,
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'password' => app('hash')->make('123456')
+            'password' => app('hash')->make('123456'),
+            'role_id' => 1,
+            'is_active' => 'Y'
         ];
     }
 }
