@@ -11,7 +11,7 @@ git clone https://github.com/yudaadp/lumen-api-backend.git
 2. Install composer packages
 
 ```
-cd lumen-rest-api-jwt-auth
+cd  lumen-api-backend
 $ composer install
 ```
 
