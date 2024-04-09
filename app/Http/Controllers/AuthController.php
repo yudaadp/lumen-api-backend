@@ -4,32 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-/**
- * @OA\Post (
- *     path="/api/register",
- *     @OA\Response(response="200", description="Api register")
- * )
- */
+use Illuminate\Support\Str;
 
-/**
- * @OA\Post (
- *     path="/api/login",
- *     @OA\RequestBody(
- *          required=true,
- *          @OA\JsonContent(
- *              type="object",
- *              @OA\Property(property="email", type="string", example="Your email"),
- *              @OA\Property(property="password", type="string", example="Ypur password")
- *          )
- *      ),
- *     @OA\Response(response="200", description="Api login")
- * )
- */
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
         $name = $request->name;
+        $username = $request->username;
         $email = $request->email;
         $password = $request->password;
 
@@ -58,6 +40,12 @@ class AuthController extends Controller
             $user = new User();
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->username = $request->username;
+            $user->is_active = 'Y';
+            $user->session_id = '';
+            $user->online_status = 'offline';
+            $user->role_id = 1;
+            $user->created_by = $request->username;
             $user->password = app('hash')->make($request->password);
 
             if ($user->save()) {
@@ -75,6 +63,10 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        auth()->user()->update([
+            'session_id' => '',
+            'online_status' => 'offline'
+        ]);
         auth()->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
@@ -86,15 +78,22 @@ class AuthController extends Controller
         $password = $request->password;
 
         // Check if field is empty
-        if (empty($email) or empty($password)) {
+        if (empty($email) || empty($password)) {
             return response()->json(['status' => 'error', 'message' => 'You must fill all the fields']);
         }
 
         $credentials = request(['email', 'password']);
 
+        $sessionId = Str::uuid()->toString();
+
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        auth()->user()->update([
+            'session_id' => $sessionId,
+            'online_status' => 'online'
+        ]);
 
         return $this->respondWithToken($token);
     }

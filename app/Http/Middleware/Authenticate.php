@@ -40,5 +40,10 @@ class Authenticate
         }
 
         return $next($request);
+
+        /*$response = $next($request);
+        $response->header('X-Custom-Header', 'Custom Value');
+
+        return $response;*/
     }
 }
